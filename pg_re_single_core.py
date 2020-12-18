@@ -1,7 +1,7 @@
 import numpy as np
 import time
 import theano
-import cPickle
+import pickle
 import matplotlib.pyplot as plt
 
 import environment
@@ -166,7 +166,7 @@ def launch(pa, pg_resume=None, render=False, repre='image', end='no_new_job'):
 
     if pg_resume is not None:
         net_handle = open(pg_resume, 'rb')
-        net_params = cPickle.load(net_handle)
+        net_params = pickle.load(net_handle)
         pg_learner.set_net_params(net_params)
 
     # ----------------------------
@@ -268,7 +268,7 @@ def launch(pa, pg_resume=None, render=False, repre='image', end='no_new_job'):
 
         if iteration % pa.output_freq == 0:
             param_file = open(pa.output_filename + '_' + str(iteration) + '.pkl', 'wb')
-            cPickle.dump(pg_learner.get_params(), param_file, -1)
+            pickle.dump(pg_learner.get_params(), param_file, -1)
             param_file.close()
 
             slow_down_cdf.launch(pa, pa.output_filename + '_' + str(iteration) + '.pkl',

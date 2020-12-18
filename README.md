@@ -4,11 +4,11 @@ HotNets'16 http://people.csail.mit.edu/hongzi/content/publications/DeepRM-HotNet
 Install prerequisites
 
 ```
-sudo apt-get update
-sudo apt-get install python-numpy python-scipy python-dev python-pip python-nose g++ libopenblas-dev git
-pip install --user Theano
-pip install --user Lasagne==0.1
-sudo apt-get install python-matplotlib
+sudo apt update
+sudo apt install python3-dev python3-pip g++ libopenblas-dev git python3-venv
+python3 -m venv venv
+source venv/bin/activate
+pip3 install -r requirements.txt
 ```
 
 In folder RL, create a data/ folder. 

@@ -1,0 +1,7 @@
+numpy
+scipy
+Theano
+Lasagne
+matplotlib
+h5py
+
