@@ -1,6 +1,6 @@
 import numpy as np
 import theano, theano.tensor as T
-import lasagne
+import Lasagne.lasagne as lasagne
 from collections import OrderedDict
 
 
