@@ -2,14 +2,14 @@ import numpy as np
 import theano
 import time
 import sys
-import cPickle
+import pickle
 
 import environment
 import pg_network
 import other_agents
 import job_distribution
 
-np.set_printoptions(threshold='nan')
+np.set_printoptions(threshold=0)
 
 
 def add_sample(X, y, idx, X_to_add, y_to_add):
@@ -38,7 +38,7 @@ def launch(pa, pg_resume=None, render=False, repre='image', end='no_new_job'):
 
     if pg_resume is not None:
         net_handle = open(pg_resume, 'r')
-        net_params = cPickle.load(net_handle)
+        net_params = pickle.load(net_handle)
         pg_learner.set_net_params(net_params)
 
     if pa.evaluate_policy_name == "SJF":
@@ -61,13 +61,13 @@ def launch(pa, pg_resume=None, render=False, repre='image', end='no_new_job'):
     mem_alloc = 4
 
     X = np.zeros([pa.simu_len * pa.num_ex * mem_alloc, 1,
-                  pa.network_input_height, pa.network_input_width],
+                  int(pa.network_input_height), int(pa.network_input_width)],
                  dtype=theano.config.floatX)
     y = np.zeros(pa.simu_len * pa.num_ex * mem_alloc,
                  dtype='int32')
 
-    print 'network_input_height=', pa.network_input_height
-    print 'network_input_width=', pa.network_input_width
+    print('network_input_height=', pa.network_input_height)
+    print('network_input_width=', pa.network_input_width)
 
     counter = 0
 
@@ -75,7 +75,7 @@ def launch(pa, pg_resume=None, render=False, repre='image', end='no_new_job'):
 
         env.reset()
 
-        for _ in xrange(pa.episode_max_length):
+        for _ in range(pa.episode_max_length):
 
             # ---- get current state ----
             ob = env.observe()
@@ -113,7 +113,7 @@ def launch(pa, pg_resume=None, render=False, repre='image', end='no_new_job'):
     print("Start training...")
     # ----------------------------
 
-    for epoch in xrange(pa.num_epochs):
+    for epoch in range(pa.num_epochs):
 
         # In each epoch, we do a full pass over the training data:
         train_err = 0
@@ -155,7 +155,7 @@ def launch(pa, pg_resume=None, render=False, repre='image', end='no_new_job'):
         if epoch % pa.output_freq == 0:
 
             net_file = open(pa.output_filename + '_net_file_' + str(epoch) + '.pkl', 'wb')
-            cPickle.dump(pg_learner.return_net_params(), net_file, -1)
+            pickle.dump(pg_learner.return_net_params(), net_file, -1)
             net_file.close()
 
     print("done")

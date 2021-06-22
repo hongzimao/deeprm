@@ -4,11 +4,13 @@ HotNets'16 http://people.csail.mit.edu/hongzi/content/publications/DeepRM-HotNet
 Install prerequisites
 
 ```
-sudo apt-get update
-sudo apt-get install python-numpy python-scipy python-dev python-pip python-nose g++ libopenblas-dev git
-pip install --user Theano
-pip install --user Lasagne==0.1
-sudo apt-get install python-matplotlib
+cd deeprm
+sudo apt update
+sudo apt install python3-dev python3-pip g++ libopenblas-dev git python3-venv
+git clone https://github.com/Lasagne/Lasagne
+python3 -m venv venv
+source venv/bin/activate
+pip3 install -r requirements.txt
 ```
 
 In folder RL, create a data/ folder. 
@@ -51,15 +53,15 @@ Example:
   - launch supervised learning for policy estimation 
   
   ```
-  python launcher.py --exp_type=pg_su --simu_len=50 --num_ex=1000 --ofile=data/pg_su --out_freq=10 
+  python3 launcher.py --exp_type=pg_su --simu_len=50 --num_ex=1000 --ofile=data/pg_su --out_freq=10 
   ```
   - launch policy gradient using network parameter just obtained
   
   ```
-  python launcher.py --exp_type=pg_re --pg_re=data/pg_su_net_file_20.pkl --simu_len=50 --num_ex=10 --ofile=data/pg_re
+  python3 launcher.py --exp_type=pg_re --pg_re=data/pg_su_net_file_20.pkl --simu_len=50 --num_ex=10 --ofile=data/pg_re
   ```
   - launch testing and comparing experiemnt on unseen examples with pg agent just trained
   
   ```
-  python launcher.py --exp_type=test --simu_len=50 --num_ex=10 --pg_re=data/pg_re_1600.pkl --unseen=True
+  python3 launcher.py --exp_type=test --simu_len=50 --num_ex=10 --pg_re=data/pg_re_1600.pkl --unseen=True
   ```

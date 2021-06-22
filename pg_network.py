@@ -1,6 +1,6 @@
 import numpy as np
 import theano, theano.tensor as T
-import lasagne
+import Lasagne.lasagne as lasagne
 from collections import OrderedDict
 
 
@@ -67,9 +67,9 @@ class PGLearner:
         actions = T.ivector('actions')
         values = T.vector('values')
 
-        print 'network_input_height=', pa.network_input_height
-        print 'network_input_width=', pa.network_input_width
-        print 'network_output_dim=', pa.network_output_dim
+        print('network_input_height=', pa.network_input_height)
+        print('network_input_width=', pa.network_input_width)
+        print('network_output_dim=', pa.network_output_dim)
 
         # image representation
         self.l_out = \
@@ -85,7 +85,7 @@ class PGLearner:
 
         params = lasagne.layers.helper.get_all_params(self.l_out)
 
-        print ' params=', params, ' count=', lasagne.layers.count_params(self.l_out)
+        print(' params=', params, ' count=', lasagne.layers.count_params(self.l_out))
 
         self._get_param = theano.function([], params)
 
@@ -132,7 +132,7 @@ class PGLearner:
         # l1_penalty = lasagne.regularization.regularize_network_params(self.l_out, lasagne.regularization.l1)
 
         su_loss += 1e-3*l2_penalty
-        print 'lr_rate=', self.lr_rate
+        print('lr_rate=', self.lr_rate)
 
         su_updates = lasagne.updates.rmsprop(su_loss, params,
                                              self.lr_rate, self.rms_rho, self.rms_eps)
@@ -171,7 +171,7 @@ class PGLearner:
 
     def get_one_act_prob(self, state):
 
-        states = np.zeros((1, 1, self.input_height, self.input_width), dtype=theano.config.floatX)
+        states = np.zeros((1, 1, int(self.input_height), int(self.input_width)), dtype=theano.config.floatX)
         states[0, :, :] = state
         act_prob = self._get_act_prob(states)[0]
 
