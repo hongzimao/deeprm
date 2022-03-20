@@ -182,6 +182,8 @@ def plot_lr_curve(output_file_prefix, max_rew_lr_curve, mean_rew_lr_curve, slow_
 
 def get_traj_worker(pg_learner, env, pa, result):
 
+    print "start"
+
     trajs = []
 
     for i in xrange(pa.num_seq_per_batch):
@@ -212,6 +214,8 @@ def get_traj_worker(pg_learner, env, pa, result):
     all_slowdown = (finish_time[finished_idx] - enter_time[finished_idx]) / job_len[finished_idx]
 
     all_entropy = np.concatenate([traj["entropy"] for traj in trajs])
+
+    print len(all_entropy)
 
     result.append({"all_ob": all_ob,
                    "all_action": all_action,
@@ -307,9 +311,10 @@ def launch(pa, pg_resume=None, render=False, repre='image', end='no_new_job'):
 
                 for p in ps:
                     p.start()
-
-                for p in ps:
                     p.join()
+
+                # for p in ps:
+                #     p.join()
 
                 result = []  # convert list from shared memory
                 for r in manager_result:

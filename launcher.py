@@ -9,6 +9,7 @@ import parameters
 import pg_re
 import pg_su
 import slow_down_cdf
+import pg_re_single_core
 
 
 def script_usage():
@@ -146,7 +147,7 @@ def main():
     elif type_exp == 'v_su':
         v_su.launch(pa, v_resume, render)
     elif type_exp == 'pg_re':
-        pg_re.launch(pa, pg_resume, render, repre='image', end='all_done')
+        pg_re_single_core.launch(pa, pg_resume, render, repre='image', end='all_done')
     elif type_exp == 'pg_v_re':
         pg_v_re.launch(pa, pg_resume, v_resume, render)
     elif type_exp == 'test':
