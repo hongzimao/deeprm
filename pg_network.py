@@ -5,7 +5,6 @@ from collections import OrderedDict
 
 
 def rmsprop_updates(grads, params, stepsize, rho=0.9, epsilon=1e-9):
-
     updates = []
 
     for param, grad in zip(params, grads):
@@ -23,7 +22,6 @@ def utils_floatX(arr):
 
 def adam_update(grads, params, learning_rate=0.001, beta1=0.9,
                 beta2=0.999, epsilon=1e-8):
-
     t_prev = theano.shared(utils_floatX(0.))
     updates = OrderedDict()
 
@@ -31,7 +29,7 @@ def adam_update(grads, params, learning_rate=0.001, beta1=0.9,
     one = T.constant(1)
 
     t = t_prev + 1
-    a_t = learning_rate*T.sqrt(one-beta2**t)/(one-beta1**t)
+    a_t = learning_rate * T.sqrt(one - beta2 ** t) / (one - beta1 ** t)
 
     for param, g_t in zip(params, grads):
         value = param.get_value(borrow=True)
@@ -40,9 +38,9 @@ def adam_update(grads, params, learning_rate=0.001, beta1=0.9,
         v_prev = theano.shared(np.zeros(value.shape, dtype=value.dtype),
                                broadcastable=param.broadcastable)
 
-        m_t = beta1*m_prev + (one-beta1)*g_t
-        v_t = beta2*v_prev + (one-beta2)*g_t**2
-        step = a_t*m_t/(T.sqrt(v_t) + epsilon)
+        m_t = beta1 * m_prev + (one - beta1) * g_t
+        v_t = beta2 * v_prev + (one - beta2) * g_t ** 2
+        step = a_t * m_t / (T.sqrt(v_t) + epsilon)
 
         updates[m_prev] = m_t
         updates[v_prev] = v_t
@@ -54,7 +52,6 @@ def adam_update(grads, params, learning_rate=0.001, beta1=0.9,
 
 class PGLearner:
     def __init__(self, pa):
-
         self.input_height = pa.network_input_height
         self.input_width = pa.network_input_width
         self.output_height = pa.network_output_dim
@@ -73,7 +70,7 @@ class PGLearner:
 
         # image representation
         self.l_out = \
-            build_pg_network(pa.network_input_height, pa.network_input_width, pa.network_output_dim)
+            build_small_conv_pg_network(pa.network_input_height, pa.network_input_width, pa.network_output_dim)
 
         # compact representation
         # self.l_out = \
@@ -131,12 +128,12 @@ class PGLearner:
         l2_penalty = lasagne.regularization.regularize_network_params(self.l_out, lasagne.regularization.l2)
         # l1_penalty = lasagne.regularization.regularize_network_params(self.l_out, lasagne.regularization.l1)
 
-        su_loss += 1e-3*l2_penalty
+        su_loss += 1e-3 * l2_penalty
         print 'lr_rate=', self.lr_rate
 
         su_updates = lasagne.updates.rmsprop(su_loss, params,
                                              self.lr_rate, self.rms_rho, self.rms_eps)
-        #su_updates = lasagne.updates.nesterov_momentum(su_loss, params, self.lr_rate)
+        # su_updates = lasagne.updates.nesterov_momentum(su_loss, params, self.lr_rate)
 
         self._su_train_fn = theano.function([states, su_target], [su_loss, prob_act], updates=su_updates)
 
@@ -146,7 +143,6 @@ class PGLearner:
 
     # get the action based on the estimated value
     def choose_action(self, state):
-
         act_prob = self.get_one_act_prob(state)
 
         csprob_n = np.cumsum(act_prob)
@@ -157,20 +153,16 @@ class PGLearner:
         return act
 
     def train(self, states, actions, values):
-
         loss = self._train_fn(states, actions, values)
         return loss
 
     def get_params(self):
-
         return self._get_param()
 
     def get_grad(self, states, actions, values):
-
         return self._get_grad(states, actions, values)
 
     def get_one_act_prob(self, state):
-
         states = np.zeros((1, 1, self.input_height, self.input_width), dtype=theano.config.floatX)
         states[0, :, :] = state
         act_prob = self._get_act_prob(states)[0]
@@ -204,7 +196,6 @@ class PGLearner:
 
 
 def build_pg_network(input_height, input_width, output_length):
-
     # l_in = lasagne.layers.InputLayer(
     #     shape=(None, 1, input_height, input_width),
     # )
@@ -289,7 +280,7 @@ def build_pg_network(input_height, input_width, output_length):
 def build_compact_pg_network(input_height, input_width, output_length):
     l_in = lasagne.layers.InputLayer(
         shape=(None, 1, input_height, input_width),
-        )
+    )
 
     l_hid1 = lasagne.layers.DenseLayer(
         l_in,
@@ -298,7 +289,7 @@ def build_compact_pg_network(input_height, input_width, output_length):
         nonlinearity=lasagne.nonlinearities.rectify,
         W=lasagne.init.HeNormal('relu'),
         b=lasagne.init.Constant(0.05)
-        )
+    )
 
     l_hid2 = lasagne.layers.DenseLayer(
         l_hid1,
@@ -306,10 +297,10 @@ def build_compact_pg_network(input_height, input_width, output_length):
         # nonlinearity=lasagne.nonlinearities.tanh,
         nonlinearity=lasagne.nonlinearities.rectify,
         # W=lasagne.init.Normal(.0201),
-        #W=lasagne.init.Normal(.01),
+        # W=lasagne.init.Normal(.01),
         W=lasagne.init.HeNormal('relu'),
         b=lasagne.init.Constant(0.05)
-        )
+    )
 
     l_hid3 = lasagne.layers.DenseLayer(
         l_hid2,
@@ -317,23 +308,105 @@ def build_compact_pg_network(input_height, input_width, output_length):
         # nonlinearity=lasagne.nonlinearities.tanh,
         nonlinearity=lasagne.nonlinearities.rectify,
         # W=lasagne.init.Normal(.0201),
-        #W=lasagne.init.Normal(.01),
+        # W=lasagne.init.Normal(.01),
         W=lasagne.init.HeNormal('relu'),
         b=lasagne.init.Constant(0.05)
-        )
+    )
 
-
-    #50% dropout again:
-    #l_hid2_drop = lasagne.layers.DropoutLayer(l_hid2, p=0.5)
+    # 50% dropout again:
+    # l_hid2_drop = lasagne.layers.DropoutLayer(l_hid2, p=0.5)
 
     l_out = lasagne.layers.DenseLayer(
         l_hid3,
         num_units=output_length,
         nonlinearity=lasagne.nonlinearities.softmax,
         # W=lasagne.init.Normal(.0001),
-        #W=lasagne.init.Normal(.01),
+        # W=lasagne.init.Normal(.01),
         W=lasagne.init.HeNormal('relu'),
         b=lasagne.init.Constant(0.05)
-        )
+    )
+
+    return l_out
+
+
+def build_small_conv_pg_network(input_height, input_width, output_length):
+    l_in = lasagne.layers.InputLayer(
+        shape=(None, 1, input_height, input_width),
+    )
+
+    l_hid1 = lasagne.layers.Conv2DLayer(
+        l_in,
+        num_filters=16,
+        filter_size=2,
+        stride=(1, 1),
+        pad=1,
+        # untie_biases=False,
+        W=lasagne.init.GlorotUniform(.01),
+        b=lasagne.init.Constant(0.),
+        nonlinearity=lasagne.nonlinearities.rectify,
+        convolution=theano.tensor.nnet.conv2d
+    )
+
+    l_out = lasagne.layers.DenseLayer(
+        l_hid1,
+        num_units=output_length,
+        nonlinearity=lasagne.nonlinearities.softmax,
+        # W=lasagne.init.Normal(.0001),
+        W=lasagne.init.Normal(.01),
+        b=lasagne.init.Constant(0)
+    )
+
+    return l_out
+
+
+def build_big_conv_pg_network(input_height, input_width, output_length):
+    l_in = lasagne.layers.InputLayer(
+        shape=(None, 1, input_height, input_width),
+    )
+
+    l_hid1 = lasagne.layers.Conv2DLayer(
+        l_in,
+        num_filters=8,
+        filter_size=4,
+        stride=(2, 2),
+        pad=2,
+        # untie_biases=False,
+        W=lasagne.init.GlorotUniform(.01),
+        b=lasagne.init.Constant(0.),
+        nonlinearity=lasagne.nonlinearities.rectify,
+        convolution=theano.tensor.nnet.conv2d
+    )
+
+    l_hid2 = lasagne.layers.Conv2DLayer(
+        l_hid1,
+        num_filters=16,
+        filter_size=2,
+        stride=(1, 1),
+        pad=1,
+        # untie_biases=False,
+        W=lasagne.init.GlorotUniform(.01),
+        b=lasagne.init.Constant(0.),
+        nonlinearity=lasagne.nonlinearities.rectify,
+        convolution=theano.tensor.nnet.conv2d
+    )
+
+    l_hid3 = lasagne.layers.DenseLayer(
+        l_hid2,
+        num_units=20,
+        # nonlinearity=lasagne.nonlinearities.tanh,
+        nonlinearity=lasagne.nonlinearities.rectify,
+        # W=lasagne.init.Normal(.0201),
+        W=lasagne.init.Normal(.01),  # std = 0.01
+        b=lasagne.init.Constant(0)
+    )
+
+    l_out = lasagne.layers.DenseLayer(
+        l_hid3,
+        num_units=output_length,
+        nonlinearity=lasagne.nonlinearities.softmax,
+        # W=lasagne.init.Normal(.0001),
+        W=lasagne.init.Normal(.01),
+        b=lasagne.init.Constant(0)
+    )
 
     return l_out
