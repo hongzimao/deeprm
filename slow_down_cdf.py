@@ -95,6 +95,8 @@ def launch(pa, pg_resume=None, render=False, plot=False, repre='image', end='no_
     num_job_remain = {}
     job_remain_delay = {}
 
+    job_complete_time = {}
+
     for test_type in test_types:
         all_discount_rews[test_type] = []
         jobs_slow_down[test_type] = []
@@ -103,6 +105,8 @@ def launch(pa, pg_resume=None, render=False, plot=False, repre='image', end='no_
         job_len_remain[test_type] = []
         num_job_remain[test_type] = []
         job_remain_delay[test_type] = []
+
+        job_complete_time[test_type] = []
 
     for seq_idx in xrange(pa.num_ex):
         print('\n\n')
@@ -130,6 +134,10 @@ def launch(pa, pg_resume=None, render=False, plot=False, repre='image', end='no_
 
             finished_idx = (finish_time >= 0)
             unfinished_idx = (finish_time < 0)
+
+            job_complete_time[test_type].append(
+                finish_time[finished_idx] - enter_time[finished_idx]
+            )
 
             jobs_slow_down[test_type].append(
                 (finish_time[finished_idx] - enter_time[finished_idx]) / job_len[finished_idx]
@@ -162,7 +170,7 @@ def launch(pa, pg_resume=None, render=False, plot=False, repre='image', end='no_
 
         for test_type in test_types:
             slow_down_cdf = np.sort(np.concatenate(jobs_slow_down[test_type]))
-            print test_type, np.average(np.concatenate(jobs_slow_down[test_type]))
+            print test_type, np.average(np.concatenate(job_complete_time[test_type]))
             slow_down_yvals = np.arange(len(slow_down_cdf)) / float(len(slow_down_cdf))
             ax.plot(slow_down_cdf, slow_down_yvals, linewidth=2, label=test_type)
 

@@ -1,4 +1,5 @@
 # DeepRM
+
 HotNets'16 http://people.csail.mit.edu/hongzi/content/publications/DeepRM-HotNets16.pdf
 
 Install prerequisites
@@ -11,10 +12,9 @@ pip install --user Lasagne==0.1
 sudo apt-get install python-matplotlib
 ```
 
-In folder RL, create a data/ folder. 
+In folder RL, create a data/ folder.
 
-Use `launcher.py` to launch experiments. 
-
+Use `launcher.py` to launch experiments.
 
 ```
 --exp_type <type of experiment> 
@@ -43,23 +43,24 @@ Use `launcher.py` to launch experiments.
 --unseen <generate unseen example> 
 ```
 
-
 The default variables are defined in `parameters.py`.
 
+Example:
 
-Example: 
-  - launch supervised learning for policy estimation 
-  
+- launch supervised learning for policy estimation
+
   ```
   python launcher.py --exp_type=pg_su --simu_len=50 --num_ex=1000 --ofile=data/pg_su --out_freq=10 
   ```
-  - launch policy gradient using network parameter just obtained
-  
+
+- launch policy gradient using network parameter just obtained for job slowdown
+
   ```
-  python launcher.py --exp_type=pg_re --pg_re=data/pg_su_net_file_20.pkl --simu_len=50 --num_ex=10 --ofile=data/pg_re
+  python2 launcher.py --exp_type=pg_re --simu_len=50 --num_ex=10 --ofile=data/pg_re_slowdown
   ```
-  - launch testing and comparing experiemnt on unseen examples with pg agent just trained
-  
+
+- launch testing and comparing experiemnt on unseen examples with pg agent just trained
+
   ```
   python launcher.py --exp_type=test --simu_len=50 --num_ex=10 --pg_re=data/pg_re_1600.pkl --unseen=True
   ```

@@ -55,7 +55,7 @@ class Parameters:
         self.network_output_dim = self.num_nw + 1  # + 1 for void action
 
         self.delay_penalty = -1  # penalty for delaying things in the current work screen
-        self.hold_penalty = -1  # penalty for holding things in the new work screen
+        self.hold_penalty = 0  # penalty for holding things in the new work screen
         self.dismiss_penalty = -1  # penalty for missing a job because the queue is full
 
         self.num_frames = 1  # number of frames to combine and process
