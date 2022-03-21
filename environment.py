@@ -38,7 +38,7 @@ class Env:
                     float(len(self.nw_len_seqs))
                 print("Load on # " + str(i) + " resource dimension is " + str(self.workload[i]))
             self.nw_len_seqs = np.reshape(self.nw_len_seqs,
-                                           [self.pa.num_ex, self.pa.simu_len])
+                                          [self.pa.num_ex, self.pa.simu_len])
             self.nw_size_seqs = np.reshape(self.nw_size_seqs,
                                            [self.pa.num_ex, self.pa.simu_len, self.pa.num_res])
         else:
@@ -97,10 +97,10 @@ class Env:
                     ir_pt += self.pa.max_job_size
 
             image_repr[: self.job_backlog.curr_size / backlog_width,
-                       ir_pt: ir_pt + backlog_width] = 1
+            ir_pt: ir_pt + backlog_width] = 1
             if self.job_backlog.curr_size % backlog_width > 0:
                 image_repr[self.job_backlog.curr_size / backlog_width,
-                           ir_pt: ir_pt + self.job_backlog.curr_size % backlog_width] = 1
+                ir_pt: ir_pt + self.job_backlog.curr_size % backlog_width] = 1
             ir_pt += backlog_width
 
             image_repr[:, ir_pt: ir_pt + 1] = self.extra_info.time_since_last_new_job / \
@@ -114,8 +114,8 @@ class Env:
         elif self.repre == 'compact':
 
             compact_repr = np.zeros(self.pa.time_horizon * (self.pa.num_res + 1) +  # current work
-                                    self.pa.num_nw * (self.pa.num_res + 1) +        # new work
-                                    1,                                              # backlog indicator
+                                    self.pa.num_nw * (self.pa.num_res + 1) +  # new work
+                                    1,  # backlog indicator
                                     dtype=theano.config.floatX)
 
             cr_pt = 0
@@ -123,7 +123,7 @@ class Env:
             # current work reward, after each time step, how many jobs left in the machine
             job_allocated = np.ones(self.pa.time_horizon) * len(self.machine.running_job)
             for j in self.machine.running_job:
-                job_allocated[j.finish_time - self.curr_time: ] -= 1
+                job_allocated[j.finish_time - self.curr_time:] -= 1
 
             compact_repr[cr_pt: cr_pt + self.pa.time_horizon] = job_allocated
             cr_pt += self.pa.time_horizon
@@ -176,7 +176,8 @@ class Env:
 
                 plt.subplot(self.pa.num_res,
                             1 + self.pa.num_nw + 1,  # first +1 for current work, last +1 for backlog queue
-                            1 + i * (self.pa.num_nw + 1) + j + skip_row + 1)  # plot the backlog at the end, +1 to avoid 0
+                            1 + i * (
+                                    self.pa.num_nw + 1) + j + skip_row + 1)  # plot the backlog at the end, +1 to avoid 0
 
                 plt.imshow(job_slot, interpolation='nearest', vmax=1)
 
@@ -206,7 +207,7 @@ class Env:
 
         plt.imshow(extra_info, interpolation='nearest', vmax=1)
 
-        plt.show()     # manual
+        plt.show()  # manual
         # plt.pause(0.01)  # automatic
 
     def get_reward(self):
@@ -257,9 +258,9 @@ class Env:
                     done = True
             elif self.end == "all_done":  # everything has to be finished
                 if self.seq_idx >= self.pa.simu_len and \
-                   len(self.machine.running_job) == 0 and \
-                   all(s is None for s in self.job_slot.slot) and \
-                   all(s is None for s in self.job_backlog.backlog):
+                        len(self.machine.running_job) == 0 and \
+                        all(s is None for s in self.job_slot.slot) and \
+                        all(s is None for s in self.job_backlog.backlog):
                     done = True
                 elif self.curr_time > self.pa.episode_max_length:  # run too long, force termination
                     done = True
@@ -314,7 +315,7 @@ class Env:
                 self.seq_no = (self.seq_no + 1) % self.pa.num_ex
 
             self.reset()
-        
+
         if self.render:
             self.plot_state()
 
@@ -503,7 +504,6 @@ def test_backlog():
 
 
 def test_compact_speed():
-
     pa = parameters.Parameters()
     pa.simu_len = 50
     pa.num_ex = 10
@@ -524,7 +524,6 @@ def test_compact_speed():
 
 
 def test_image_speed():
-
     pa = parameters.Parameters()
     pa.simu_len = 50
     pa.num_ex = 10
