@@ -1,0 +1,12 @@
+/data
+
+*.pyc
+/.idea
+/.vscode
+/__pycache__
+/log
+/plot
+/samples
+*.ipynb
+*.txt
+/venv
