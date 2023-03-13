@@ -34,6 +34,47 @@ class Dist:
 
         return nw_len, nw_size
 
+    def poisson_dist(self):
+        # new work duration
+        nw_len = np.random.poisson(lam=self.job_len)
+    
+        nw_size = np.zeros(self.num_res)
+    
+        for i in range(self.num_res):
+            nw_size[i] = np.random.randint(1, self.max_nw_size + 1)
+    
+        return nw_len, nw_size
+    
+    def exp_dist(self):
+        # new work duration
+        nw_len = np.random.exponential(scale=self.job_len)
+    
+        nw_size = np.zeros(self.num_res)
+    
+        for i in range(self.num_res):
+            nw_size[i] = np.random.randint(1, self.max_nw_size + 1)
+    
+    return nw_len, nw_size
+
+    def bernoulli_dist(self):
+        # -- job length --
+        if np.random.rand() < self.job_small_chance:  # small job
+            nw_len = np.random.binomial(self.job_len_small_upper, self.job_small_chance)
+        else:  # big job
+            nw_len = np.random.binomial(self.job_len_big_upper, self.job_big_chance)
+        
+        nw_size = np.zeros(self.num_res)
+
+        # -- job resource request --
+        dominant_res = np.random.randint(0, self.num_res)
+        for i in range(self.num_res):
+            if i == dominant_res:
+                nw_size[i] = np.random.binomial(self.dominant_res_upper, self.dominant_res_chance)
+            else:
+                nw_size[i] = np.random.binomial(self.other_res_upper, self.other_res_chance)
+                
+        return nw_len, nw_size
+
     def bi_model_dist(self):
 
         # -- job length --
