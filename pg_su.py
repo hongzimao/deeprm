@@ -66,8 +66,11 @@ def launch(pa, pg_resume=None, render=False, repre='image', end='no_new_job'):
     y = np.zeros(pa.simu_len * pa.num_ex * mem_alloc,
                  dtype='int32')
 
-    print 'network_input_height=', pa.network_input_height
-    print 'network_input_width=', pa.network_input_width
+    # print 'X=', X
+    # print 'y=', y
+
+    # print 'network_input_height=', pa.network_input_height
+    # print 'network_input_width=', pa.network_input_width
 
     counter = 0
 
